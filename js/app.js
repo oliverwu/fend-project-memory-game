@@ -1,52 +1,58 @@
 /*
  * Create a list that holds all of your cards
  */
-// var Card = function (shape) {
-//     var obj = {shape: shape};
-// }
-
 
 var cardMoves = 0;
 
 var cardRestart = function () {
     $(".deck").find("*").removeClass("open show match dismatch");
-    // cardMoves = 0;
-    // $('span').text(cardMoves);
 };
 
 var restart = function () {
     cardRestart();
     cardMoves = 0;
     cards = [];
+    cardTargets = [];
     $('span').text(cardMoves);
 };
-
-
+//重置按钮
 $(".restart").on('click', restart);
 
-$(".deck").on('click','li',function () {
-    cardMoves++;
+var judgeTurned = function () {
+    if ($(this).attr('class') === "card open show") {
+        return false;
+    } else if ($(this).attr('class') === "card open show match") {
+        return false;
+    } else {
+        return true;
+    }
+
+};
+//为什么这个判断卡片是否被重复点击的function不起作用
+$(".deck").find('li').click(function () {
+    console.log($(this).attr('class'));
+
+    if ($(this).attr('class') === "card open show") {
+        cardMoves
+    } else if ($(this).attr('class') === "card open show match") {
+        cardMoves
+    } else {
+        cardMoves++;
+    }
+
+    //为什么用函数导入的话为什么实现功能
+    // if (judgeTurned()){
+    //     cardMoves++;
+    // }
     console.log(cardMoves);
     console.log( 'You clicked a link!' );
     $('span').text(cardMoves);
 });
 
-var cardTurned = [];
-var numCarTurned = 0;
-var turnCard = function () {
-    $(this).toggleClass("open show");
-    cardTurned.push($(this));
-    numCarTurned++;
-    console.log($(this));
-    console.log(cardTurned);
-    console.log(numCarTurned);
-};
 
-// $(".deck").find('li').click(turnCard);
+
 
 // $(".deck").find('li').addEventListener('click', turnCard);
-
-// $(".deck").find('li').click();
 
 var cards = [];
 var cardTargets = [];
@@ -62,7 +68,7 @@ var cardDismatch = function (array) {
         array[i].addClass("dismatch");
     }
     array = [];
-
+    //为什么无法调用array
 };
 
 var judgeCard = function (array) {
@@ -78,9 +84,37 @@ var judgeCard = function (array) {
 
 };
 
+var openCard = function () {
+    $(this).addClass("open show");
+};
+
+var addOpenCard = function (array) {
+    array.push($(this));
+};
+
+// $(".deck").find('li').click(function () {
+//     $(this).addClass("open show");
+//     addOpenCard(cardTargets);
+//     //为什么写在函数里面就起不了作用
+//     if (cardTargets[0].children().attr('class') === cardTargets[1].children().attr('class')){
+//         cardMatch(cardTargets);
+//         cards.push(cardTargets[0]);
+//         cards.push(cardTargets[1]);
+//         cardTargets = [];
+//         congratulations();
+//     } else {
+//         cardDismatch(cardTargets);
+//         setTimeout(cardRestart,1000);
+//         cardTargets = [];
+//         cards = [];
+//     }
+// });
+
+
 $(".deck").find('li').click(function () {
-    $(this).toggleClass("open show");
+    console.log($(this));
     cardTargets.push($(this));
+    $(this).addClass("open show");
     console.log(cardTargets);
     if (cardTargets[0].children().attr('class') === cardTargets[1].children().attr('class')){
         cardMatch(cardTargets);
@@ -106,48 +140,10 @@ var congratulations = function () {
 };
 
 HTMLmoves = '<p class="col"> With %data1% Moves and %data2% Stars. </p>';
+//cardMoves无法传递过去
 var formattedMoves = HTMLmoves.replace("%data1%", cardMoves);
 var formattedResult = formattedMoves.replace("%data2%", 1);
 $('#result').append(formattedResult);
-
-
-
-// $(".deck").on('click','li',function (evt) {
-//     $(evt.target).toggleClass("open show");
-// });
-
-
-// var cardClasses = [];
-// var cardTargets = [];
-// $(".deck").on('click','li',function (evt) {
-//     $(evt.target).toggleClass("open show");
-//     cardClasses.push($(evt.target).find('i').attr('class'));
-//     cardTargets.push($(evt.target));
-//     if(cardClasses.length > 1){
-//         if(cardClasses[0] === cardClasses[1]){
-//             cardTargets[0].toggleClass("match");
-//             cardTargets[1].toggleClass("match");
-//             cardClasses = [];
-//             cardTargets = [];
-//         } else {
-//             cardTargets[0].toggleClass("open show");
-//             cardTargets[1].removeClass("open show");
-//             cardClasses = [];
-//             cardTargets = [];
-//         }
-//     }
-//     console.log(cardClasses);
-// });
-//
-// $(".deck").on('click','li',function (evt) {
-//     var x = $(evt.target).find('i').attr('class');
-//     console.log(x);
-
-// });
-
-var removeClass = function () {
-
-};
 
 
 /*
