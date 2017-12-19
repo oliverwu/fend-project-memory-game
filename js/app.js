@@ -1,9 +1,12 @@
 /*
  * Create a list that holds all of your cards
  */
+document.getElementById('congratulations').style.display = 'none';
+document.getElementById('view').style.display = 'none';
+
 
 var cardMoves = 0;
-
+//卡牌重置
 var cardRestart = function () {
     $(".deck").find("*").removeClass("open show match dismatch");
 };
@@ -14,39 +17,32 @@ var restart = function () {
     cards = [];
     cardTargets = [];
     $('span').text(cardMoves);
+    count = 0;
+    var newCardTypes = shuffle(cardTypes);
+    $('.shuffle').each(function(){
+        var that = $(this);
+        shuffleCard(that, newCardTypes);
+    });
 };
 //重置按钮
 $(".restart").on('click', restart);
 
-var judgeTurned = function () {
-    if ($(this).attr('class') === "card open show") {
-        return false;
-    } else if ($(this).attr('class') === "card open show match") {
-        return false;
-    } else {
+var judgeTurned = function (that) {
+    if (that.attr('class') === "card") {
         return true;
     }
-
 };
-//为什么这个判断卡片是否被重复点击的function不起作用
+//计算步数
 $(".deck").find('li').click(function () {
     console.log($(this).attr('class'));
-
-    if ($(this).attr('class') === "card open show") {
-        cardMoves
-    } else if ($(this).attr('class') === "card open show match") {
-        cardMoves
-    } else {
+    var that = $(this);
+    if (judgeTurned(that)){
         cardMoves++;
     }
-
-    //为什么用函数导入的话为什么实现功能
-    // if (judgeTurned()){
-    //     cardMoves++;
-    // }
     console.log(cardMoves);
     console.log( 'You clicked a link!' );
     $('span').text(cardMoves);
+    countStar();
 });
 
 
@@ -71,25 +67,30 @@ var cardDismatch = function (array) {
     //为什么无法调用array
 };
 
-var judgeCard = function (array) {
-    if (array[0].find('i').attr('class') === array[1].find('i').attr('class')){
-        cardMatch(array);
-        array = [];
+var judgeCard = function (arrayTargets,arrays) {
+    if (cardTargets[0].children().attr('class') === cardTargets[1].children().attr('class')){
+        cardMatch(cardTargets);
+        cards.push(cardTargets[0]);
+        cards.push(cardTargets[1]);
+        cardTargets = [];
+        console.log(cards.length);
+        congratulations();
     } else {
-        cardDismatch(array);
-        setTimeout(cardRestart,1000)
-        array = [];
+        cardDismatch(cardTargets);
+        setTimeout(cardRestart,1000);
+        cardTargets = [];
+        cards = [];
     }
 
 
 };
 
-var openCard = function () {
-    $(this).addClass("open show");
+var openCard = function (that) {
+    that.addClass("open show");
 };
 
-var addOpenCard = function (array) {
-    array.push($(this));
+var addOpenCard = function (array,that) {
+    array.push(that);
 };
 
 // $(".deck").find('li').click(function () {
@@ -110,40 +111,83 @@ var addOpenCard = function (array) {
 //     }
 // });
 
-
 $(".deck").find('li').click(function () {
-    console.log($(this));
-    cardTargets.push($(this));
-    $(this).addClass("open show");
-    console.log(cardTargets);
-    if (cardTargets[0].children().attr('class') === cardTargets[1].children().attr('class')){
-        cardMatch(cardTargets);
-        cards.push(cardTargets[0]);
-        cards.push(cardTargets[1]);
-        cardTargets = [];
-        console.log(cards.length);
-        congratulations();
-    } else {
-        cardDismatch(cardTargets);
-        setTimeout(cardRestart,1000);
-        cardTargets = [];
-        cards = [];
+    var that = $(this);
+    console.log(that);
+    if (judgeTurned(that)){
+        cardTargets.push(that);
+        openCard(that);
+        // that.addClass("open show");
     }
-    console.log(cards);
+    console.log(cardTargets);
+    if (cardTargets.length === 2) {
+        if (cardTargets[0].children().attr('class') === cardTargets[1].children().attr('class')){
+            cardMatch(cardTargets);
+            cards.push(cardTargets[0]);
+            cards.push(cardTargets[1]);
+            cardTargets = [];
+            console.log(cards.length);
+            congratulations();
+        } else {
+            cardDismatch(cardTargets);
+            setTimeout(cardRestart,1000);
+            cardTargets = [];
+            cards = [];
+        }
+        console.log(cards);
+    }
 });
 
+
+// $(".deck").find('li').click(function () {
+//     console.log($(this));
+//     cardTargets.push($(this));
+//     $(this).addClass("open show");
+//     console.log(cardTargets);
+//     if (cardTargets[0].children().attr('class') === cardTargets[1].children().attr('class')){
+//         cardMatch(cardTargets);
+//         cards.push(cardTargets[0]);
+//         cards.push(cardTargets[1]);
+//         cardTargets = [];
+//         console.log(cards.length);
+//         congratulations();
+//     } else {
+//         cardDismatch(cardTargets);
+//         setTimeout(cardRestart,1000);
+//         cardTargets = [];
+//         cards = [];
+//     }
+//     console.log(cards);
+// });
+
+// var congratulations = function () {
+//     if(cards.length > 15){
+//         console.log("match");
+//         window.open('Congratulations.html');
+//     }
+// };
+
 var congratulations = function () {
-    if(cards.length > 15){
-        console.log("match");
-        window.open('Congratulations.html');
+    if(cards.length >= 16) {
+        finalMoves();
+        document.getElementById('congratulations').style.display = 'block';
+        document.getElementById('view').style.display = 'block';
     }
 };
 
-HTMLmoves = '<p class="col"> With %data1% Moves and %data2% Stars. </p>';
-//cardMoves无法传递过去
-var formattedMoves = HTMLmoves.replace("%data1%", cardMoves);
-var formattedResult = formattedMoves.replace("%data2%", 1);
-$('#result').append(formattedResult);
+
+
+var finalMoves = function () {
+    HTMLmoves = '<p class="col"> With %data1% Moves and %data2% Stars. </p>';
+    var formattedMoves = HTMLmoves.replace("%data1%", cardMoves);
+    var formattedResult = formattedMoves.replace("%data2%", starNum);
+    $('#result').append(formattedResult);
+};
+// HTMLmoves = '<p class="col"> With %data1% Moves and %data2% Stars. </p>';
+// //cardMoves无法传递过去
+// var formattedMoves = HTMLmoves.replace("%data1%", cardMoves);
+// var formattedResult = formattedMoves.replace("%data2%", 1);
+// $('#result').append(formattedResult);
 
 
 /*
@@ -168,6 +212,26 @@ function shuffle(array) {
     return array;
 }
 
+
+var cardTypes = [
+    "fa fa-diamond","fa fa-paper-plane-o","fa fa-anchor","fa fa-bolt",
+    "fa fa-cube","fa fa-leaf","fa fa-bicycle","fa fa-bomb",
+    "fa fa-diamond","fa fa-paper-plane-o","fa fa-anchor","fa fa-bolt",
+    "fa fa-cube","fa fa-leaf","fa fa-bicycle","fa fa-bomb"
+];
+
+var count = 0;
+
+// var addCardClass = function () {
+//     $(this).removeClass();
+//     $(this).addClass(cardTypes[count])
+//     count++
+// };
+
+
+// $("i").each(addCardClass());
+
+
 /*
  * set up the event listener for a card. If a card is clicked:
  *  - display the card's symbol (put this functionality in another function that you call from this one)
@@ -178,5 +242,31 @@ function shuffle(array) {
  *    + increment the move counter and display it on the page (put this functionality in another function that you call from this one)
  *    + if all cards have matched, display a message with the final score (put this functionality in another function that you call from this one)
  */
+
+
+var shuffleCard = function (that, newCardTypes) {
+    that.removeClass();
+    that.addClass(newCardTypes[count]);
+    that.addClass("shuffle");
+    console.log(count);
+    count++
+};
+var newCardTypes = shuffle(cardTypes);
+$('.shuffle').each(function(){
+    var that = $(this);
+    shuffleCard(that, newCardTypes);
+});
+
+var starNum = 3;
+var countStar = function () {
+    if (cardMoves > 30) {
+        $('i').eq(1).css("display","none");
+        starNum = 2;
+    }
+    if (cardMoves > 60) {
+        $("i").eq(2).css("display","none");
+        starNum = 1;
+    }
+};
 
 
