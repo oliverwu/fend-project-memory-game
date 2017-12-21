@@ -9,6 +9,7 @@ var cardMoves = 0;
 //卡牌重置
 var cardRestart = function () {
     $(".deck").find("*").removeClass("open show match dismatch");
+    bool = true;
 };
 
 var restart = function () {
@@ -23,6 +24,7 @@ var restart = function () {
         var that = $(this);
         shuffleCard(that, newCardTypes);
     });
+    bool = true;
 };
 //重置按钮
 $(".restart").on('click', restart);
@@ -34,15 +36,17 @@ var judgeTurned = function (that) {
 };
 //计算步数
 $(".deck").find('li').click(function () {
-    console.log($(this).attr('class'));
-    var that = $(this);
-    if (judgeTurned(that)){
-        cardMoves++;
+    if (bool) {
+        console.log($(this).attr('class'));
+        var that = $(this);
+        if (judgeTurned(that)){
+            cardMoves++;
+        }
+        console.log(cardMoves);
+        console.log( 'You clicked a link!' );
+        $('span').text(cardMoves);
+        countStar();
     }
-    console.log(cardMoves);
-    console.log( 'You clicked a link!' );
-    $('span').text(cardMoves);
-    countStar();
 });
 
 
@@ -111,32 +115,41 @@ var addOpenCard = function (array,that) {
 //     }
 // });
 
+var bool = true;
+
 $(".deck").find('li').click(function () {
-    var that = $(this);
-    console.log(that);
-    if (judgeTurned(that)){
-        cardTargets.push(that);
-        openCard(that);
-        // that.addClass("open show");
-    }
-    console.log(cardTargets);
-    if (cardTargets.length === 2) {
-        if (cardTargets[0].children().attr('class') === cardTargets[1].children().attr('class')){
-            cardMatch(cardTargets);
-            cards.push(cardTargets[0]);
-            cards.push(cardTargets[1]);
-            cardTargets = [];
-            console.log(cards.length);
-            congratulations();
-        } else {
-            cardDismatch(cardTargets);
-            setTimeout(cardRestart,1000);
-            cardTargets = [];
-            cards = [];
+    if (bool) {
+        var that = $(this);
+        console.log(that);
+        if (judgeTurned(that)){
+            cardTargets.push(that);
+            openCard(that);
+            // that.addClass("open show");
         }
-        console.log(cards);
+        console.log(cardTargets);
+        if (cardTargets.length === 2) {
+            if (cardTargets[0].children().attr('class') === cardTargets[1].children().attr('class')){
+                cardMatch(cardTargets);
+                cards.push(cardTargets[0]);
+                cards.push(cardTargets[1]);
+                cardTargets = [];
+                console.log(cards.length);
+                congratulations();
+            } else {
+                cardDismatch(cardTargets);
+                bool = false;
+                setTimeout(cardRestart,1000);
+                cardTargets = [];
+                cards = [];
+            }
+            console.log(cards);
+        }
     }
+
 });
+
+
+
 
 
 // $(".deck").find('li').click(function () {
