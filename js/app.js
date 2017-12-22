@@ -133,8 +133,8 @@ var congratulations = function () {
 
 
 var finalResult = function () {
-    HTMLmoves = '<p class="col"> With %data1% Moves and %data2% Stars. </p>';
-    HTMLclock = '<p class="col"> You finish the game in %data3%S. </p>';
+    var HTMLmoves = '<p class="col"> With %data1% Moves and %data2% Stars. </p>';
+    var HTMLclock = '<p class="col"> You finish the game in %data3%S. </p>';
     var formattedMoves = HTMLmoves.replace("%data1%", cardMoves);
     var formattedResult = formattedMoves.replace("%data2%", starNum);
     var formattedClock = HTMLclock.replace("%data3%", seconds);
