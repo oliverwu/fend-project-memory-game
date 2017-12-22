@@ -82,6 +82,7 @@ var cardDismatch = function (array) {
     array = [];
     //为什么无法调用array
     //我这里其实是想把array这个数组清空的，就是导入的array变量，但实际好像没作用
+    //是不是应该使用array = new Array();？
 };
 
 
