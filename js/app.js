@@ -14,7 +14,11 @@ var cardTargets = [];
 var count = 0;
 //星星数量初始值
 var starNum = 3;
-
+//response用于判断游戏的卡片是否需要对点击作出反应
+var response = true;
+//用于计时
+var nInterID;
+var seconds = 0;
 
 //卡牌重置
 var cardRestart = function () {
@@ -36,6 +40,8 @@ var restart = function () {
         shuffleCard(that, newCardTypes);
     });
     response = true;
+    seconds = -1
+    //为什么我设置为"-1"以后，网页上重置之后才会从0开始
 };
 //重置按钮
 $(".restart").on('click', restart);
@@ -56,7 +62,7 @@ $(".deck").find('li').click(function () {
         }
         console.log(cardMoves);
         console.log( 'You clicked a link!' );
-        $('span').text(cardMoves);
+        $('span').text(Math.floor(cardMoves/2));
         countStar();
     }
 });
@@ -75,6 +81,7 @@ var cardDismatch = function (array) {
     }
     array = [];
     //为什么无法调用array
+    //我这里其实是想把array这个数组清空的，就是导入的array变量，但实际好像没作用
 };
 
 
@@ -83,7 +90,7 @@ var openCard = function (that) {
 };
 
 //判断卡片是否匹配
-var response = true;
+
 $(".deck").find('li').click(function () {
     if (response) {
         var that = $(this);
@@ -127,9 +134,12 @@ var congratulations = function () {
 
 var finalResult = function () {
     HTMLmoves = '<p class="col"> With %data1% Moves and %data2% Stars. </p>';
+    HTMLclock = '<p class="col"> You finish the game in %data3%S. </p>';
     var formattedMoves = HTMLmoves.replace("%data1%", cardMoves);
     var formattedResult = formattedMoves.replace("%data2%", starNum);
+    var formattedClock = HTMLclock.replace("%data3%", seconds);
     $('#result').append(formattedResult);
+    $('#result').append(formattedClock);
 };
 
 
@@ -172,7 +182,6 @@ $('.shuffle').each(function(){
 });
 
 //判断星星数
-var starNum = 3;
 var countStar = function () {
     if (cardMoves > 30) {
         $('i').eq(1).css("display","none");
@@ -183,6 +192,19 @@ var countStar = function () {
         starNum = 1;
     }
 };
+
+
+
+
+var addSeconds = function () {
+    seconds++;
+    $(".clock").text(seconds + "S")
+};
+
+var gameTime = function () {
+    nInterID = setInterval(addSeconds,1000);
+};
+
 
 
 /*
